@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "nfh-instantiation-agent"
 version = "0.1.0"
 description = "Governed NFH Fabric infrastructure instantiation agent"
-readme = "tools/instantiation_agent/README.md"
+readme = "guides/README.md"
 requires-python = ">=3.11"
 license = { text = "Proprietary" }
 authors = [{ name = "NFH" }]

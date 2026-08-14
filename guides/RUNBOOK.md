@@ -443,6 +443,6 @@ echo "$INSTANTIATION_AGENT_E2E_LIVE"
 test -n "$GROQ_API_KEY" && echo "GROQ key present"
 ```
 
-If Groq returns 403 from Python but curl works, make sure [llm.py](llm.py) includes `Accept: application/json` and `User-Agent: curl/8.4.0` headers.
+If Groq returns 403 from Python but curl works, make sure [llm.py](../tools/instantiation_agent/llm.py) includes `Accept: application/json` and `User-Agent: curl/8.4.0` headers.
 
 If pytest warns about `.pytest_cache`, run the tests from a writable repository checkout or set a writable cache directory. The tests can still pass without cache writes.
