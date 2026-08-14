@@ -1,0 +1,7 @@
+# Instantiation-agent local runtime state and generated deployment artifacts
+.instantiation-agent/
+
+# Python bytecode and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
