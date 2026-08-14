@@ -18,6 +18,17 @@ The Infrastructure Instantiation Agent manages the ongoing lifecycle of an NFH F
 
 The agent is designed around deterministic skills. The LLM is allowed to understand user language and phrase results, but it is not trusted for money, infrastructure, credentials, policy decisions, or final state changes.
 
+## Install and start
+
+From the repository root:
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -e ".[dev]"
+nfh-instantiation-agent chat
+```
+
 ## Lifecycle Model
 
 Bootstrap is the highest-risk path. For GCP topologies, it estimates cost, checks policy, requires config approval, requires apply approval, renders GCP Terraform, stores last-applied intent, writes audit events, and writes a signed release manifest.
@@ -175,8 +186,8 @@ Deterministic hashing, synthetic DID generation, canonical JSON serialization, a
 Small command-line entry point. It supports local terminal chat and rollback:
 
 ```bash
-python3 -m tools.instantiation_agent chat
-python3 -m tools.instantiation_agent.cli rollback --state-db .instantiation-agent/state.sqlite3 --release-id <release-id>
+nfh-instantiation-agent chat
+nfh-instantiation-agent rollback --state-db .instantiation-agent/state.sqlite3 --release-id <release-id>
 ```
 
 For chat prompts and test values, see `CHAT_JOURNEY.md`.

@@ -10,7 +10,7 @@ This guide shows how to test the local terminal chat REPL:
 
 ```bash
 export GROQ_API_KEY="your-rotated-groq-key"
-python3 -m tools.instantiation_agent chat
+nfh-instantiation-agent chat
 ```
 
 Type one prompt, read the answer, then type the next prompt. Exit with `quit`, `exit`, or Ctrl-D.
@@ -261,18 +261,18 @@ For production local sessions, approve the same production mutating skills exact
 Run the deterministic journey tests:
 
 ```bash
-python3 -m pytest tools/instantiation_agent/tests/test_chat_journeys.py
+pytest tools/instantiation_agent/tests/test_chat_journeys.py
 ```
 
 Run all instantiation-agent tests:
 
 ```bash
-python3 -m pytest tools/instantiation_agent/tests
+pytest
 ```
 
 Live Groq tests require a valid key in your own shell:
 
 ```bash
 export GROQ_API_KEY="your-rotated-groq-key"
-INSTANTIATION_AGENT_E2E_LIVE=true python3 -m pytest tools/instantiation_agent/tests/test_live_groq.py -s
+INSTANTIATION_AGENT_E2E_LIVE=true pytest tools/instantiation_agent/tests/test_live_groq.py -s
 ```

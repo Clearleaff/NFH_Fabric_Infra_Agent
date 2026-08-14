@@ -1,3 +1,19 @@
+Metadata-Version: 2.1
+Name: nfh-instantiation-agent
+Version: 0.1.0
+Summary: Governed NFH Fabric infrastructure instantiation agent
+Author: NFH
+License: Proprietary
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+
 # NFH Fabric Infrastructure Instantiation Agent
 
 ## Governed SRE control plane
@@ -23,23 +39,6 @@ The GCP/Terraform path is unchanged: Terraform uses a GCS backend and generates 
 - [RUNBOOK.md](RUNBOOK.md) gives a runnable user story you can execute locally, including bootstrap, idempotency, participant onboarding, catalog publish, upgrade, and live Groq checks.
 - [CHAT_JOURNEY.md](CHAT_JOURNEY.md) gives step-by-step terminal chat prompts for adding providers, catalogs, BAPs, and networks.
 
-## Install and run
-
-From a checkout, create an isolated environment and install the package with its test tools:
-
-```bash
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
-```
-
-Start the terminal chat:
-
-```bash
-nfh-instantiation-agent chat
-```
-
 ## LLM
 
 Groq is the only live provider. Set `GROQ_API_KEY`; the default model is `llama-3.3-70b-versatile`, override with `INSTANTIATION_AGENT_GROQ_MODEL`.
@@ -51,7 +50,7 @@ The LLM may parse free text into strict JSON, phrase deterministic skill output,
 Successful bootstrap or upgrade writes a signed release manifest. Rollback is a real command:
 
 ```bash
-nfh-instantiation-agent rollback --state-db .instantiation-agent/state.sqlite3 --release-id <release-id>
+python -m tools.instantiation_agent.cli rollback --state-db .instantiation-agent/state.sqlite3 --release-id <release-id>
 ```
 
 ## Tests
@@ -59,11 +58,11 @@ nfh-instantiation-agent rollback --state-db .instantiation-agent/state.sqlite3 -
 Fast tests:
 
 ```bash
-pytest
+python -m pytest tools/instantiation_agent/tests
 ```
 
 Live Groq tests are skipped unless both env vars are set:
 
 ```bash
-GROQ_API_KEY=... INSTANTIATION_AGENT_E2E_LIVE=true pytest tools/instantiation_agent/tests/test_live_groq.py -s
+GROQ_API_KEY=... INSTANTIATION_AGENT_E2E_LIVE=true python -m pytest tools/instantiation_agent/tests/test_live_groq.py -s
 ```

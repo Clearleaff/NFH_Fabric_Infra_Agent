@@ -2,7 +2,7 @@
 
 ## Governed local run
 
-Run `python3 -m tools.instantiation_agent.cli chat`, request a local Beckn Fabric, provide its name/domain/environment, inspect with `show plan`, then use the existing exact approval phrases. Compose and Docker daemon checks run before startup; `status` and `check drift` remain read-only.
+Run `nfh-instantiation-agent chat`, request a local Beckn Fabric, provide its name/domain/environment, inspect with `show plan`, then use the existing exact approval phrases. Compose and Docker daemon checks run before startup; `status` and `check drift` remain read-only.
 
 This runbook gives you a concrete way to test the agent locally.
 
@@ -26,16 +26,13 @@ You can run the story two ways:
 
 ## Prerequisites
 
-Run commands from the repo root:
+Run commands from the repository root. Create an isolated environment and install the package:
 
 ```bash
-cd /home/cleaff/beckn-onix
-```
-
-Install pytest if needed:
-
-```bash
-python3 -m pip install pytest --break-system-packages
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
 ```
 
 For live Groq tests:
@@ -48,24 +45,24 @@ export INSTANTIATION_AGENT_E2E_LIVE=true
 ## 1. Run The Unit Test Suite
 
 ```bash
-python3 -m pytest tools/instantiation_agent/tests -q
+pytest -q
 ```
 
 Expected output without live env vars:
 
 ```text
-10 passed, 2 skipped
+45 passed, 3 skipped
 ```
 
 Expected output with live Groq env vars:
 
 ```text
-12 passed
+48 passed
 ```
 
 ## 2. Execute The User Story Locally
 
-Run this from `/home/cleaff/beckn-onix`:
+Run this from the repository root after installation:
 
 ```bash
 python3 - <<'PY'
@@ -399,7 +396,7 @@ Budget cap blocks apply: 254.0 exceeds 10.
 ```bash
 export GROQ_API_KEY="your-groq-key"
 export INSTANTIATION_AGENT_E2E_LIVE=true
-python3 -m pytest tools/instantiation_agent/tests/test_live_groq.py -q -s
+pytest tools/instantiation_agent/tests/test_live_groq.py -q -s
 ```
 
 Expected:
@@ -430,7 +427,7 @@ PY
 Then request rollback:
 
 ```bash
-python3 -m tools.instantiation_agent.cli rollback \
+nfh-instantiation-agent rollback \
   --state-db .instantiation-agent/demo.sqlite3 \
   --release-id <release-id>
 ```
@@ -448,4 +445,4 @@ test -n "$GROQ_API_KEY" && echo "GROQ key present"
 
 If Groq returns 403 from Python but curl works, make sure [llm.py](llm.py) includes `Accept: application/json` and `User-Agent: curl/8.4.0` headers.
 
-If pytest warns about `.pytest_cache` in this environment, that is because `/home/cleaff/beckn-onix` may be mounted read-only for cache writes. The tests can still pass.
+If pytest warns about `.pytest_cache`, run the tests from a writable repository checkout or set a writable cache directory. The tests can still pass without cache writes.

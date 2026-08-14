@@ -13,7 +13,7 @@ Docker daemon running hona chahiye. Groq key optional hai: deterministic local f
 Repository root se:
 
 ```bash
-python3 -m tools.instantiation_agent chat
+nfh-instantiation-agent chat
 ```
 
 Har `>` line ke baad ek command enter karni hai.

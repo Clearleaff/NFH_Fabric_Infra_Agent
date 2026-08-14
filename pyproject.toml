@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nfh-instantiation-agent"
+version = "0.1.0"
+description = "Governed NFH Fabric infrastructure instantiation agent"
+readme = "tools/instantiation_agent/README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+authors = [{ name = "NFH" }]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+nfh-instantiation-agent = "tools.instantiation_agent.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["tools", "tools.*"]
+exclude = ["tools.instantiation_agent.tests", "tools.instantiation_agent.tests.*"]
+
+[tool.setuptools.package-data]
+"tools.instantiation_agent" = ["policies/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tools/instantiation_agent/tests"]
+pythonpath = ["."]
+addopts = "-ra"

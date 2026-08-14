@@ -5,3 +5,9 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Python packaging and local environments
+build/
+dist/
+*.egg-info/
+.venv/
