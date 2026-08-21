@@ -1,2 +1,0 @@
-[console_scripts]
-nfh-instantiation-agent = tools.instantiation_agent.cli:main

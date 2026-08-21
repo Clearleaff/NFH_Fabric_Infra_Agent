@@ -1,52 +1,101 @@
 # NFH Fabric Infrastructure Instantiation Agent
 
-## Governed SRE control plane
+The NFH Fabric Infrastructure Instantiation Agent is a governed control plane for creating and operating an NFH/Beckn Fabric. It gives an operator a conversational interface for infrastructure and participant workflows while keeping all state-changing actions deterministic, policy-checked, approval-gated, and auditable.
 
-Groq only parses or phrases requests; deterministic skills use fixed commands. Desired state, observed runtime state, deterministic plan hashes, policy, plan-bound approvals, verification, signed releases, and audit evidence are separate layers. `show plan`, `show diff`, `status`, `check drift`, `show audit`, and `cancel` are safe chat controls. For local topology, Compose is validated with `docker compose config --quiet` and Docker/daemon preflight runs before `up -d`; no GCP fields are required.
+It is designed for local development fabrics as well as cloud-backed infrastructure. The project can render and run a local Docker Compose runtime, or generate infrastructure-as-code artifacts for a configured cloud provider. Provider-specific integrations are implementation details: the agent’s governance model does not depend on a particular LLM or cloud vendor.
 
-Local bootstrap also performs a deployment-artifact preflight before approval. It verifies rendered runtime images are locally resolved; otherwise it blocks with no mutation instead of attempting an unverified `latest` pull. Configure an approved source/runtime supply chain before treating a local runtime as deployable.
+## What it manages
 
-`tools/instantiation_agent` is separate from the one-shot bootstrap CLI and chat orchestrator. It owns three lifecycles:
+- Fabric bootstrap, including desired-state planning, policy evaluation, approvals, and release evidence.
+- Local Fabric execution with Docker Compose, runtime-image preflight, configuration validation, and service health checks.
+- Cloud infrastructure artifact generation through a provider-specific infrastructure-as-code path.
+- Participant onboarding and offboarding, including DIDs, capability credentials, and registry roles.
+- Catalog publication, updates, and retirement without changing the underlying infrastructure.
+- Bounded incremental upgrades and drift detection/reconciliation.
 
-- Bootstrap: rare GCP network setup with content-hash idempotency, deterministic cost estimation, config approval (`approve bootstrap config`), and apply approval (`spend money now`).
-- Local mode: additive Docker Compose execution for demo fabrics when `cloud.topology` is `local`. It skips cost estimation because there is no cloud spend, renders compose artifacts, then directly starts registry and gateway containers after the same bootstrap approval gates.
-- Participant lifecycle: DID provisioning, scoped capability credential issuance, registry role registration, and offboarding. Production requires exact per-skill approval phrases such as `approve did_provision_skill`.
-- Catalog lifecycle: publish, update, and retire registry/business-layer catalog entries. These skills never render or touch Terraform.
-- Fabric evolution: incremental upgrades only for scale, machine type, adapter version, or policy bundle version. Apply requires `approve incremental upgrade`.
-- Drift reconciliation: compares observed and desired state, auto-healing only actions allowed by the policy bundle.
+## How it works
 
-The GCP/Terraform path is unchanged: Terraform uses a GCS backend and generates GKE or VM resources with changed intent paths written beside the Terraform. Unlike Terraform, local mode is execution mode, so approved local bootstrap runs `docker compose up -d`.
+Natural-language input is a convenience layer, not an execution authority. An optional LLM provider may extract candidate fields or phrase a response, but deterministic code selects supported operations and runs fixed skill chains. It cannot execute shell, container, or infrastructure commands; bypass policy; or reuse an approval after the plan changes.
 
-## Guides
+Every mutating workflow follows the same control-plane pattern:
 
-- [USER_GUIDE.md](USER_GUIDE.md) explains how the agent works, the lifecycle model, approval gates, and what each file does.
-- [RUNBOOK.md](RUNBOOK.md) gives a runnable user story you can execute locally, including bootstrap, idempotency, participant onboarding, catalog publish, upgrade, and live Groq checks.
-- [CHAT_JOURNEY.md](CHAT_JOURNEY.md) gives step-by-step terminal chat prompts for adding providers, catalogs, BAPs, and networks.
+```text
+operator request
+  -> normalized desired state and immutable plan
+  -> policy and risk checks
+  -> plan-bound approval
+  -> deterministic skill execution
+  -> verification, audit evidence, and release manifest
+```
 
-## LLM
+Safe chat controls such as `show plan`, `show diff`, `status`, `check drift`, `show audit`, and `cancel` do not mutate Fabric state.
 
-Groq is the only live provider. Set `GROQ_API_KEY`; the default model is `llama-3.3-70b-versatile`, override with `INSTANTIATION_AGENT_GROQ_MODEL`.
+## Quick start
 
-The LLM may parse free text into strict JSON, phrase deterministic skill output, and ask clarifying questions. Credentials, private keys, and raw cloud API responses must not enter LLM context.
+Run these commands from the repository root:
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+
+nfh-instantiation-agent chat
+```
+
+Use `exit`, `quit`, or Ctrl-D to leave the terminal chat. The agent can also be used through its public Python API; the runnable examples are in the [runbook](../../../../guides/RUNBOOK.md).
+
+## Governance and safety
+
+- **Plan-bound approvals:** approvals are recorded against an immutable plan ID and hash. Changing desired state invalidates the prior approval.
+- **Policy enforcement:** each skill is evaluated against the policy bundle, environment, actor, and risk level.
+- **Source and artifact controls:** local execution validates rendered Compose configuration and checks required runtime images before starting services.
+- **Secret boundaries:** secret references are used in state and configuration; credential values and raw provider responses must not be sent to an LLM context.
+- **Truthful verification:** a release is recorded only after the required runtime checks succeed. The project distinguishes running containers, reachable services, and a complete protocol transaction.
+- **Auditability:** plans, approvals, desired state, skill evidence, and release manifests are stored in the local state and audit store.
+
+Bootstrap has two explicit gates:
+
+```text
+approve bootstrap config
+spend money now
+```
+
+Production participant and catalog operations can require additional exact, skill-specific approvals. See the [User Guide](../../../../guides/USER_GUIDE.md) for the complete lifecycle and approval model.
+
+## Project map
+
+| Resource | Purpose |
+| --- | --- |
+| [Documentation overview](../../../../guides/README.md) | Installation, high-level project overview, and command reference. |
+| [Governance and Guardrails](../../../../guides/GOVERNANCE_AND_GUARDRAILS.md) | Control-by-control governance model with direct references to the policy and implementation files. |
+| [Architecture](../../../../guides/ARCHITECTURE.md) | System design, trust boundaries, fixed skill chains, runtime topology, and verification levels. |
+| [User Guide](../../../../guides/USER_GUIDE.md) | Lifecycle behavior, approvals, API surface, state, policy, and source-file guide. |
+| [Runbook](../../../../guides/RUNBOOK.md) | End-to-end setup and operational examples. |
+| [Chat Journey](../../../../guides/CHAT_JOURNEY.md) | Step-by-step examples for the terminal chat interface. |
+| [Local E2E Test Guide](../../../../guides/LOCAL_E2E_TEST_GUIDE.md) | Local Fabric bootstrap, participant setup, and protocol-testing guidance. |
+| [Design article](../../../../tools/instantiation_agent/NFH_FABRIC_BLOG.md) | Background, design rationale, and known verification boundaries. |
 
 ## Rollback
 
-Successful bootstrap or upgrade writes a signed release manifest. Rollback is a real command:
+A successful bootstrap or upgrade writes a signed release manifest. To roll back a recorded release:
 
 ```bash
-python -m tools.instantiation_agent.cli rollback --state-db .instantiation-agent/state.sqlite3 --release-id <release-id>
+nfh-instantiation-agent rollback \
+  --state-db .instantiation-agent/state.sqlite3 \
+  --release-id <release-id>
 ```
 
-## Tests
+## Testing
 
-Fast tests:
+Run the regular test suite from the repository root:
 
 ```bash
-python -m pytest tools/instantiation_agent/tests
+pytest
 ```
 
-Live Groq tests are skipped unless both env vars are set:
+Some integration tests require an explicitly configured LLM provider and are skipped unless their documented environment variables are present. See the [Runbook](../../../../guides/RUNBOOK.md) for setup and test details.
 
-```bash
-GROQ_API_KEY=... INSTANTIATION_AGENT_E2E_LIVE=true python -m pytest tools/instantiation_agent/tests/test_live_groq.py -s
-```
+## Current scope
+
+The local runtime release gate verifies container stability and required network listeners. A fully correlated Beckn transaction is tracked separately as protocol-level evidence; the architecture guide documents the current boundary and planned reliability work. The agent therefore reports the level of evidence it has rather than treating a started container as proof of an end-to-end Fabric transaction.
