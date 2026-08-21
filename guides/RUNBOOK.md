@@ -67,7 +67,7 @@ Run this from the repository root after installation:
 ```bash
 python3 - <<'PY'
 from pathlib import Path
-from tools.instantiation_agent import InstantiationAgent, Stage
+from nfh_instantiation_agent import InstantiationAgent, Stage
 
 intent = {
     "network": {
@@ -183,8 +183,8 @@ export GROQ_API_KEY="your-groq-key"
 
 python3 - <<'PY'
 from pathlib import Path
-from tools.instantiation_agent import InstantiationAgent, InstantiationChatService
-from tools.instantiation_agent.llm import GroqLLM
+from nfh_instantiation_agent import InstantiationAgent, InstantiationChatService
+from nfh_instantiation_agent.llm import GroqLLM
 
 service = InstantiationChatService(
     agent=InstantiationAgent(
@@ -257,7 +257,7 @@ This local mode is intentionally different from the GCP path: after the same boo
 python3 - <<'PY'
 from pathlib import Path
 import subprocess
-from tools.instantiation_agent import InstantiationAgent, Stage
+from nfh_instantiation_agent import InstantiationAgent, Stage
 
 intent = {
     "network": {
@@ -342,7 +342,7 @@ If Docker is not installed or the images are unavailable locally, the agent retu
 ```bash
 python3 - <<'PY'
 from pathlib import Path
-from tools.instantiation_agent import InstantiationAgent
+from nfh_instantiation_agent import InstantiationAgent
 
 intent = {
     "network": {"name": "approval-demo", "environment": "staging", "domain": "retail:1.1.0", "country": "IND"},
@@ -369,7 +369,7 @@ Bootstrap needs exact phrase: approve bootstrap config
 ```bash
 python3 - <<'PY'
 from pathlib import Path
-from tools.instantiation_agent import InstantiationAgent
+from nfh_instantiation_agent import InstantiationAgent
 
 intent = {
     "network": {"name": "budget-demo", "environment": "staging", "domain": "retail:1.1.0", "country": "IND"},
@@ -396,7 +396,7 @@ Budget cap blocks apply: 254.0 exceeds 10.
 ```bash
 export GROQ_API_KEY="your-groq-key"
 export INSTANTIATION_AGENT_E2E_LIVE=true
-pytest tools/instantiation_agent/tests/test_live_groq.py -q -s
+pytest tests/test_live_groq.py -q -s
 ```
 
 Expected:
@@ -443,6 +443,6 @@ echo "$INSTANTIATION_AGENT_E2E_LIVE"
 test -n "$GROQ_API_KEY" && echo "GROQ key present"
 ```
 
-If Groq returns 403 from Python but curl works, make sure [llm.py](../tools/instantiation_agent/llm.py) includes `Accept: application/json` and `User-Agent: curl/8.4.0` headers.
+If Groq returns 403 from Python but curl works, make sure [llm.py](../src/nfh_instantiation_agent/llm.py) includes `Accept: application/json` and `User-Agent: curl/8.4.0` headers.
 
 If pytest warns about `.pytest_cache`, run the tests from a writable repository checkout or set a writable cache directory. The tests can still pass without cache writes.

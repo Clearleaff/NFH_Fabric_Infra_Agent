@@ -3,7 +3,7 @@ from __future__ import annotations
 import builtins
 from types import SimpleNamespace
 
-from tools.instantiation_agent import cli
+from nfh_instantiation_agent import cli
 
 
 def test_chat_repl_reuses_session_and_prints_text(monkeypatch, capsys):

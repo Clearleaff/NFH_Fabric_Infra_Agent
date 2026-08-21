@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from tools.instantiation_agent.local_fabric import local_compose_files, local_ports, participant_service_name
+from nfh_instantiation_agent.local_fabric import local_compose_files, local_ports, participant_service_name
 
 
 def test_local_compose_files_include_core_and_participant_services():

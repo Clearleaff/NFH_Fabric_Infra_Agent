@@ -24,16 +24,19 @@ dependencies = []
 dev = ["pytest>=8"]
 
 [project.scripts]
-nfh-instantiation-agent = "tools.instantiation_agent.cli:main"
+nfh-instantiation-agent = "nfh_instantiation_agent.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
-include = ["tools", "tools.*"]
-exclude = ["tools.instantiation_agent.tests", "tools.instantiation_agent.tests.*"]
+where = ["src"]
+include = ["nfh_instantiation_agent", "nfh_instantiation_agent.*"]
 
 [tool.setuptools.package-data]
-"tools.instantiation_agent" = ["policies/*.json"]
+"nfh_instantiation_agent" = ["policies/*.json"]
 
 [tool.pytest.ini_options]
-testpaths = ["tools/instantiation_agent/tests"]
-pythonpath = ["."]
+testpaths = ["tests"]
+pythonpath = ["src"]
 addopts = "-ra"

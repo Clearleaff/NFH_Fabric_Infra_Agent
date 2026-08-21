@@ -4,8 +4,8 @@ import os
 
 import pytest
 
-from tools.instantiation_agent.llm import GroqLLM
-from tools.instantiation_agent import InstantiationAgent, InstantiationChatService
+from nfh_instantiation_agent.llm import GroqLLM
+from nfh_instantiation_agent import InstantiationAgent, InstantiationChatService
 
 
 pytestmark = pytest.mark.skipif(

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from tools.instantiation_agent import AgentError, InstantiationAgent, Stage
+from nfh_instantiation_agent import AgentError, InstantiationAgent, Stage
 
 
 def intent(env: str = "dev") -> dict:
@@ -61,8 +61,8 @@ def test_local_bootstrap_skips_cost_estimation_and_writes_compose(tmp_path, monk
         stdout = "started"
         stderr = ""
 
-    monkeypatch.setattr("tools.instantiation_agent.skills.subprocess.run", lambda *args, **kwargs: Completed())
-    monkeypatch.setattr("tools.instantiation_agent.skills._poll_local_health", lambda ctx: {"healthy": True, "urls": {}})
+    monkeypatch.setattr("nfh_instantiation_agent.skills.subprocess.run", lambda *args, **kwargs: Completed())
+    monkeypatch.setattr("nfh_instantiation_agent.skills._poll_local_health", lambda ctx: {"healthy": True, "urls": {}})
     agent = InstantiationAgent(state_db=tmp_path / "state.db", workspace=tmp_path / "work", budget_cap_usd=0)
 
     state = agent.bootstrap(local_intent(), approvals={"config": "approve bootstrap config", "apply": "spend money now"})

@@ -515,7 +515,7 @@ class ReleaseManifestSkill:
         }
         manifest["signature"] = sign_payload(manifest)
         ctx.store.save_manifest(release_id, manifest)
-        rollback = f"python -m tools.instantiation_agent.cli rollback --state-db {ctx.store.path} --release-id {release_id}"
+        rollback = f"nfh-instantiation-agent rollback --state-db {ctx.store.path} --release-id {release_id}"
         return SkillResult(Stage.DONE, f"Release manifest {release_id} signed. Rollback command: {rollback}", {"manifest": manifest, "rollback_command": rollback})
 
 
