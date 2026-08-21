@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from tools.instantiation_agent import InstantiationAgent, InstantiationChatService
-from tools.instantiation_agent.skills import _discover_runtime_contract
-from tools.instantiation_agent.skills import _validate_participant_identity
-from tools.instantiation_agent.local_fabric import local_compose_files
-from tools.instantiation_agent.models import AgentError
-from tools.instantiation_agent.service import _extract_from_text
+from nfh_instantiation_agent import InstantiationAgent, InstantiationChatService
+from nfh_instantiation_agent.skills import _discover_runtime_contract
+from nfh_instantiation_agent.skills import _validate_participant_identity
+from nfh_instantiation_agent.local_fabric import local_compose_files
+from nfh_instantiation_agent.models import AgentError
+from nfh_instantiation_agent.service import _extract_from_text
 
 
 class FixedLLM:

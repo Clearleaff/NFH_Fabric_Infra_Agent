@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from tools.instantiation_agent import InstantiationAgent, InstantiationChatService
+from nfh_instantiation_agent import InstantiationAgent, InstantiationChatService
 
 
 class EchoLLM:

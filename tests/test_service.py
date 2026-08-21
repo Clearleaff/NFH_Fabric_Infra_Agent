@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tools.instantiation_agent import InstantiationAgent, InstantiationChatService
+from nfh_instantiation_agent import InstantiationAgent, InstantiationChatService
 
 
 class SequenceLLM:
@@ -130,8 +130,8 @@ def test_local_join_network_chat_flow(tmp_path, monkeypatch):
         stdout = "started"
         stderr = ""
 
-    monkeypatch.setattr("tools.instantiation_agent.skills.subprocess.run", lambda *args, **kwargs: Completed())
-    monkeypatch.setattr("tools.instantiation_agent.skills._poll_local_health", lambda ctx: {"healthy": True, "urls": {}})
+    monkeypatch.setattr("nfh_instantiation_agent.skills.subprocess.run", lambda *args, **kwargs: Completed())
+    monkeypatch.setattr("nfh_instantiation_agent.skills._poll_local_health", lambda ctx: {"healthy": True, "urls": {}})
     source = tmp_path / "onix"
     (source / "config").mkdir(parents=True)
     (source / "schemas").mkdir()
@@ -168,7 +168,7 @@ def test_local_deregister_chat_flow(tmp_path, monkeypatch):
         stdout = "stopped"
         stderr = ""
 
-    monkeypatch.setattr("tools.instantiation_agent.skills.subprocess.run", lambda *args, **kwargs: Completed())
+    monkeypatch.setattr("nfh_instantiation_agent.skills.subprocess.run", lambda *args, **kwargs: Completed())
     agent = InstantiationAgent(state_db=tmp_path / "state.db", workspace=tmp_path / "work")
     service = InstantiationChatService(agent=agent, llm=SequenceLLM([{"intent": "offboard_participant", "arguments": {"network": {"name": "local-fabric"}, "cloud": {"topology": "local"}, "subscriber_id": "bap3.local", "role": "BAP"}}]))
 

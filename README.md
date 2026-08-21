@@ -66,7 +66,6 @@ Read the [Governance and Guardrails guide](guides/GOVERNANCE_AND_GUARDRAILS.md) 
 | [Runbook](guides/RUNBOOK.md) | End-to-end setup and operational examples. |
 | [Chat Journey](guides/CHAT_JOURNEY.md) | Step-by-step terminal chat examples. |
 | [Local E2E Test Guide](guides/LOCAL_E2E_TEST_GUIDE.md) | Local Fabric bootstrap, participant setup, and protocol-testing guidance. |
-| [Design article](tools/instantiation_agent/NFH_FABRIC_BLOG.md) | Background, design rationale, and known verification boundaries. |
 
 ## Rollback
 
@@ -87,6 +86,12 @@ pytest
 ```
 
 Some integration tests require an explicitly configured LLM provider. See the [Runbook](guides/RUNBOOK.md) for the required environment and test commands.
+
+## Repository layout
+
+- `src/nfh_instantiation_agent/` is the only distributable application package.
+- `tests/` contains the test suite and is excluded from built distributions.
+- `.instantiation-agent/`, `build/`, `dist/`, and `*.egg-info/` are local/generated artifacts and are ignored by Git.
 
 ## Current verification scope
 

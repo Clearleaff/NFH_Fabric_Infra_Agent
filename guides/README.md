@@ -6,7 +6,7 @@ Groq only parses or phrases requests; deterministic skills use fixed commands. D
 
 Local bootstrap also performs a deployment-artifact preflight before approval. It verifies rendered runtime images are locally resolved; otherwise it blocks with no mutation instead of attempting an unverified `latest` pull. Configure an approved source/runtime supply chain before treating a local runtime as deployable.
 
-`tools/instantiation_agent` is separate from the one-shot bootstrap CLI and chat orchestrator. It owns three lifecycles:
+`src/nfh_instantiation_agent` is the installable application package. It owns three lifecycles:
 
 - Bootstrap: rare GCP network setup with content-hash idempotency, deterministic cost estimation, config approval (`approve bootstrap config`), and apply approval (`spend money now`).
 - Local mode: additive Docker Compose execution for demo fabrics when `cloud.topology` is `local`. It skips cost estimation because there is no cloud spend, renders compose artifacts, then directly starts registry and gateway containers after the same bootstrap approval gates.
@@ -65,5 +65,5 @@ pytest
 Live Groq tests are skipped unless both env vars are set:
 
 ```bash
-GROQ_API_KEY=... INSTANTIATION_AGENT_E2E_LIVE=true pytest tools/instantiation_agent/tests/test_live_groq.py -s
+GROQ_API_KEY=... INSTANTIATION_AGENT_E2E_LIVE=true pytest tests/test_live_groq.py -s
 ```

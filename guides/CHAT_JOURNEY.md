@@ -261,7 +261,7 @@ For production local sessions, approve the same production mutating skills exact
 Run the deterministic journey tests:
 
 ```bash
-pytest tools/instantiation_agent/tests/test_chat_journeys.py
+pytest tests/test_chat_journeys.py
 ```
 
 Run all instantiation-agent tests:
@@ -274,5 +274,5 @@ Live Groq tests require a valid key in your own shell:
 
 ```bash
 export GROQ_API_KEY="your-rotated-groq-key"
-INSTANTIATION_AGENT_E2E_LIVE=true pytest tools/instantiation_agent/tests/test_live_groq.py -s
+INSTANTIATION_AGENT_E2E_LIVE=true pytest tests/test_live_groq.py -s
 ```
